@@ -1,0 +1,7 @@
+{% for genre in genres %}
+<a href="{{ url_for('viewGenre', genre_id=genre.id) }}">{{ genre.name }}</a></br>
+{% endfor %}
+
+{% for r in recent %}
+<a href="#">{{ r.name }}</a></br>
+{% endfor %}
