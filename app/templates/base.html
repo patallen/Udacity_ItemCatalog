@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% block head %}
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+		{% endblock %}
+	</head>
+	<body>
+		<nav class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<a class="navbar-brand" href="{{ url_for('home') }}">Video Games</a>
+			</div>
+		</nav>
+		<div class="container">
+		{% block content %}
+
+		{% endblock %}
+		</div>
+	</body>
+</html>
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-sm-12">
+	<form>
+		<select name="genre" class="form-control">
+			{% for genre in genres %}
+			<option vaule="{{ genre.id }}"
+		   {% if genre_id == genre.id %}selected{% endif %}>{{ genre.name }}</option>
+			{% endfor %}
+		</select>
+	</form>
+</div>
+{% endblock %}

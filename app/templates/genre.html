@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-sm-12">
+	<h4>{{ genre.name }}</h4>
+{% for game in games %}
+< href="{{ url_for('', genre_id=genre.id) }}">{{ game.name }}</a></br>
+{% endfor %}
+</div>
+{% endblock %}
