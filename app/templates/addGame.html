@@ -6,30 +6,24 @@
 	</div>
 </div>
 <form action="{{ url_for('addGame') }}" method='POST'>
+	{{ form.csrf_token }}
 	<div class="row">
 		<div class="col-sm-4">
 			<div class="form-group">
-				<label for="genre">Genre:</label>
-				<select name="genre" class="form-control">
-					<!--Fill dropdown with genre name-->
-					{% for genre in genres %}
-					<option vaule="{{ genre.id }}"
-						{% if genre_id == genre.id %}selected
-						{% endif %}>{{ genre.name }}</option>
-					{% endfor %}
-				</select>
+				{{ form.genre.label }}:
+				{{ form.genre(class="form-control") }}
 			</div>
 		</div>
 		<div class="col-sm-8">
 			<div class="form-group">
-				<label for="title">Title:</label></br>
-				<input name="title" class="form-control">
+				{{ form.title.label }}:
+				{{ form.title(class="form-control") }}
 			</div>
 		</div>
 		<div class="col-sm-12">
 			<div class="form-group">
-				<label for="description">Description:</label>
-				<textarea class="form-control" name="description"></textarea>
+				{{ form.description.label }}:
+				{{ form.description(class="form-control") }}
 			</div>
 		</div>
 		<div class="col-sm-12">
