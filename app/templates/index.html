@@ -1,15 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="col-sm-4">
-<h4>Categories</h4>
-{% for genre in genres %}
-<a href="{{ url_for('viewGenre', genre_id=genre.id) }}">{{ genre.name }}</a></br>
-{% endfor %}
+<div class="row">
+	<div class="col-sm-3">
+		<h4>Categories</h4>
+	</div>
+	<div class="col-sm-6">
+		<h4>Most Recent</h4>
+	</div>
+	<div class="col-sm-3">
+		<a href="{{ url_for('addGame') }}" class="btn btn-default btn-sm">Add Game</a>
+	</div>
 </div>
-<div class="col-sm-8">
-<h4>Most Recent</h4>
-{% for r in recent %}
-<a href="#">{{ r.name }}</a> ({{ r.genre_id }})</br>
-{% endfor %}
+<div class="row">
+	<div class="col-sm-3">
+		{% for genre in genres %}
+		<a href="{{ url_for('genre', genre_id=genre.id) }}">{{ genre.name }}</a></br>
+		{% endfor %}
+	</div>
+	<div class="col-sm-9">
+		{% for r in recent %}
+		<a href="#">{{ r.title }}</a> ({{ r.genre_id }})</br>
+		{% endfor %}
+	</div>
 </div>
 {% endblock %}

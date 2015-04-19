@@ -42,13 +42,13 @@ db.session.add(strategy)
 pat = User('Pat', 'prallen90@gmail.com')
 db.session.add(pat)
 
-gta5 = Game(name = 'Grand Theft Auto V', description = 'Grand Theft Auto V is an action-adventure game played from either a first-person or third-person view.', genre_id='action', user_id=1)
+gta5 = Game(title = 'Grand Theft Auto V', description = 'Grand Theft Auto V is an action-adventure game played from either a first-person or third-person view.', genre_id='action', user_id=1)
 db.session.add(gta5)
 
-deadisland = Game(name = 'Dead Island', description = 'Zombie Apocolypse. Can you survive the hordes of undead?', genre_id='action', user_id=1)
+deadisland = Game(title = 'Dead Island', description = 'Zombie Apocolypse. Can you survive the hordes of undead?', genre_id='action', user_id=1)
 db.session.add(deadisland)
 
-bioshock = Game(name = 'BioShock', description = 'Set in 1960 in the underwater city of Rapture, with the history of the city told through audio recordings the player can collect.', genre_id='fps', user_id=1)
+bioshock = Game(title = 'BioShock', description = 'Set in 1960 in the underwater city of Rapture, with the history of the city told through audio recordings the player can collect.', genre_id='fps', user_id=1)
 db.session.add(bioshock)
 
 
