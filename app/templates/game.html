@@ -1,4 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<div class="row">
+	<div class="col-sm-9">
+		<h4>{{ game.title }} (<em>{{ game.genre.name }}</em>)</h4>
+	</div>
+	<div class="col-sm-3">
+		<a href="{{ url_for('editGame', game_id=game.id) }}" class="btn btn-default btn-sm">Edit</a>
+		<a href="{{ url_for('deleteGame', game_id=game.id) }}" class="btn btn-default btn-sm">Delete</a>
+	</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+	<img class="img-thumbnail" src="http://placekitten.com/g/190/250"></img>
+</div>
+<div class="col-sm-8">
+	{{ game.description }}
+</div>
+</div>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row text-center">
+	<div class="col-sm-12">
+		<h4>Are you sure you want to delete <strong>{{ game.title }}</strong>?</h4>
+	</div>
+</div>
+<form action="{{ url_for('deleteGame', game_id=game.id) }}" method='POST'> 
+	<div class="row text-center">
+		<input type="submit" value="Yes, I'm sure!" class="btn btn-lg btn-success"> 
+		<a class="btn btn-lg btn-danger">No, don't!</a>
+	</div>
+</form>
+</div>
+{% endblock %}

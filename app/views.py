@@ -36,15 +36,15 @@ def addGame(genre_id=None):
 
 @app.route('/game/<int:game_id>/edit/')
 def editGame(game_id):
+    genres = db.session.query(Genre).all()
     game = db.session.query(Game).filter_by(id=game_id).one()
-    return render_template('editGame.html', game=game)
+    return render_template('editGame.html', game=game, genres=genres)
 
 
 @app.route('/game/<int:game_id>/delete/')
-def deleteGame(genre_id, game_id):
-    genre = db.session.query(Genre).filter_by(id=genre_id).one()
-    game = db.session.query(Game).filter_by(id=game_id)
-    return render_template('deleteGame.html', genre=genre, game=game)
+def deleteGame(game_id):
+    game = db.session.query(Game).filter_by(id=game_id).one()
+    return render_template('deleteGame.html', game=game)
 
 
 #################################################

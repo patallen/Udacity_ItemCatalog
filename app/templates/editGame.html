@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-12">
+		<h4>Edit <em>{{ game.title }}</em></h4>
+	</div>
+</div>
+<form action="{{ url_for('editGame', game_id=game.id) }}" method='POST'>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				<label for="genre">Genre:</label>
+				<select name="genre" class="form-control">
+					<!--Fill dropdown with genre name-->
+					{% for genre in genres %}
+					<option vaule="{{ game.genre.id }}"
+						{% if genre.id == game.genre.id %}selected
+						{% endif %}>{{ game.genre.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<div class="col-sm-8">
+			<div class="form-group">
+				<label for="title">Title:</label></br>
+				<input name="title" value="{{ game.title }}" class="form-control">
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label for="description">Description:</label>
+				<textarea class="form-control" name="description">{{ game.description }}</textarea>
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div class="form-group">
+				<input type="submit" class="btn btn-success" value="Edit Game">
+				<a class="pull-right" href="{{ url_for('home') }}">Cancel</a>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}

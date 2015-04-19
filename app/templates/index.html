@@ -8,7 +8,7 @@
 		<h4>Most Recent</h4>
 	</div>
 	<div class="col-sm-3">
-		<a href="{{ url_for('addGame') }}" class="btn btn-default btn-sm">Add Game</a>
+		<a href="{{ url_for('addGame') }}" class="btn btn-default btn-sm pull-right">Add Game</a>
 	</div>
 </div>
 <div class="row">
@@ -19,7 +19,7 @@
 	</div>
 	<div class="col-sm-9">
 		{% for r in recent %}
-		<a href="#">{{ r.title }}</a> ({{ r.genre_id }})</br>
+		<a href="{{ url_for('game', game_id=r.id) }}">{{ r.title }}</a> ({{ r.genre_id }})</br>
 		{% endfor %}
 	</div>
 </div>
