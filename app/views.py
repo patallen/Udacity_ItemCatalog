@@ -29,9 +29,10 @@ def game(game_id):
 
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
-def addGame(genre_id=None):    
+def addGame(genre_id=None):
     form = GameForm()
-    form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
+    form.genre.choices = [(g.id, g.name)
+                          for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
     # if genre_id in url set it as genre dropdown's default
     if genre_id is not None:
@@ -43,7 +44,8 @@ def addGame(genre_id=None):
         title = form.title.data
         genre = form.genre.data
         description = form.description.data
-        newGame = Game(user_id=user, title=title, genre_id=genre, description=description)
+        newGame = Game(
+            user_id=user, title=title, genre_id=genre, description=description)
         db.session.add(newGame)
         db.session.commit()
         return redirect(url_for('game', game_id=newGame.id))
@@ -57,7 +59,8 @@ def editGame(game_id):
     form = GameForm()
 
     # Fill genre select dropdown with choices from Genre table
-    form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
+    form.genre.choices = [(g.id, g.name)
+                          for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
 
     # If form validates and method='POST'
@@ -68,14 +71,14 @@ def editGame(game_id):
         db.session.add(game)
         db.session.commit()
         return redirect(url_for('game', game_id=game.id))
-    
+
     # Set defaults in form as current values
-    form.genre.default = game.genre_id 
+    form.genre.default = game.genre_id
     form.title.default = game.title
     form.description.default = game.description
     form.process()
-        
-    print form.errors 
+
+    print form.errors
     return render_template('editGame.html', game=game, form=form)
 
 
@@ -85,7 +88,7 @@ def deleteGame(game_id):
     if request.method == 'POST':
         db.session.delete(game)
         db.session.commit()
-    
+
     return render_template('deleteGame.html', game=game)
 
 
