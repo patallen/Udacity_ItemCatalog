@@ -79,9 +79,13 @@ def editGame(game_id):
     return render_template('editGame.html', game=game, form=form)
 
 
-@app.route('/game/<int:game_id>/delete/')
+@app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
 def deleteGame(game_id):
     game = db.session.query(Game).filter_by(id=game_id).one()
+    if request.method == 'POST':
+        db.session.delete(game)
+        db.session.commit()
+    
     return render_template('deleteGame.html', game=game)
 
 
