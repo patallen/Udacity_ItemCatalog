@@ -1,7 +1,7 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for, jsonify
 from app.models import Genre, Game
-from app.forms import GameForm
+from app.forms import GameForm, DeleteForm
 
 
 #################################################
@@ -10,7 +10,7 @@ from app.forms import GameForm
 @app.route('/')
 def home():
     genres = db.session.query(Genre).all()
-    recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(5)
+    recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(10)
     return render_template('index.html', genres=genres, recent=recentgames)
 
 
@@ -85,11 +85,13 @@ def editGame(game_id):
 @app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
 def deleteGame(game_id):
     game = db.session.query(Game).filter_by(id=game_id).one()
-    if request.method == 'POST':
+    form = DeleteForm()
+    if form.validate_on_submit():
         db.session.delete(game)
         db.session.commit()
+        return redirect(url_for('home'))
 
-    return render_template('deleteGame.html', game=game)
+    return render_template('deleteGame.html', game=game, form=form)
 
 
 #################################################
