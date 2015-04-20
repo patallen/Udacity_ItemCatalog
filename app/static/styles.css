@@ -1,3 +1,7 @@
 .container { 
 	max-width: 768px;
 }
+
+span.header {
+	font-size: 2em;
+}

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row">
 	<div class="col-sm-12">
-		<h4>Edit <em>{{ game.title }}</em></h4>
+		<span class="header">Edit <em>{{ game.title }}</em></span>
 	</div>
 </div>
 <form action="{{ url_for('editGame', game_id=game.id) }}" method='POST'>

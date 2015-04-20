@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-	<div class="col-sm-9">
-	<h4>{{ genre.name }}</h4>
-	</div>
-	<div class="col-sm-3">
+	<div class="col-sm-12">
+	<span class="header">{{ genre.name }}</span>
 		<a href="{{ url_for('addGame', genre_id=genre.id) }}" class="btn btn-default btn-sm pull-right">Add Game</a>
 	</div>
-
+</div>
+<div class="row">
 	{% for game in games %}
 	<div class="col-sm-4">
 	<a href="{{ url_for('game', game_id=game.id) }}">{{ game.title }}</a></br>

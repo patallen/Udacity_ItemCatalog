@@ -2,12 +2,13 @@
 {% block content %}
 <div class="row text-center">
 	<div class="col-sm-12">
-		<h4>Are you sure you want to delete <strong>{{ game.title }}</strong>?</h4>
+		<span class="header">Are you sure you want to delete <strong>{{ game.title }}</strong>?</span>
 	</div>
 </div>
-<form action="{{ url_for('deleteGame', game_id=game.id) }}" method='POST'> 
+<form action="{{ url_for('deleteGame', game_id=game.id) }}" method='POST'>
+	{{ form.csrf_token}}
 	<div class="row text-center">
-		<input type="submit" value="Yes, I'm sure!" class="btn btn-lg btn-success"> 
+		{{ form.submit(class="btn btn-lg btn-success")}}
 		<a class="btn btn-lg btn-danger">No, don't!</a>
 	</div>
 </form>
