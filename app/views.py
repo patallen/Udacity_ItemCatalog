@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 from app.models import Genre, Game
 from app.forms import GameForm
 
@@ -95,3 +95,13 @@ def deleteGame(game_id):
 #################################################
 #                  JSON Routes                  #
 #################################################
+@app.route('/games/<genre_id>/JSON/')
+def genreJSON(genre_id):
+    games = db.session.query(Game).filter_by(genre_id=genre_id).all()
+    return jsonify(Games=[g.serialize for g in games])
+
+
+@app.route('/game/<int:game_id>/JSON/')
+def gameJSON(game_id):
+    game = db.session.query(Game).filter_by(id=game_id).one()
+    return jsonify(Game=[game.serialize])

@@ -48,3 +48,14 @@ class Game(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship(User)
+
+    @property
+    def serialize(self):
+        return {
+            'id' : self.id,
+            'title' : self.title,
+            'description' : self.description,
+            'genre_id' : self.genre_id,
+            'user_id' : self.user_id
+        }
+    
