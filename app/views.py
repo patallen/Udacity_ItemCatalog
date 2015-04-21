@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for, jsonify, make_response
-from app.models import Genre, Game
+from app.models import Genre, Game, User
 from app.forms import GameForm, DeleteForm
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
@@ -47,7 +47,7 @@ def addGame(genre_id=None):
         form.process()
 
     if form.validate_on_submit():
-        user = 1
+        user = login_session['user_id']
         title = form.title.data
         genre = form.genre.data
         description = form.description.data
@@ -184,6 +184,12 @@ def gconnect():
     login_session['username'] = data["name"]
     login_session['picture'] = data["picture"]
     login_session['email'] = data["email"]
+    
+    print login_session['email']
+    user_id = getUserID(login_session['email'])
+    if user_id is None:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
 
     return "Welcome %s, redirecting..." % login_session['username']
 
@@ -213,4 +219,27 @@ def gdisconnect():
         # For whatever reason, the given token was invalid.
         response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
-        return reponse
+        return response
+
+
+#################################################
+#             Helper Functions                  #
+#################################################
+def getUserInfo(user_id):
+    user = db.session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = db.session.query(User).filter_by(email=email).one()
+        return user.id 
+    except:
+        return None
+
+
+def createUser(login_session):
+    newUser = User(login_session['username'], login_session['email'], login_session['picture'])
+    db.session.add(newUser)
+    db.session.commit()
+    return newUser.id

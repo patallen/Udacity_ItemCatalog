@@ -11,6 +11,11 @@
 		<nav class="navbar navbar-default navbar-static-top">
 			<div class="container">
 				<a class="navbar-brand" href="{{ url_for('home') }}">Video Games</a>
+				{% if session['credentials']%}
+				<a class="btn btn-warning auth-btn" href="{{ url_for('gdisconnect') }}">logout</a>
+				{% else %}
+				<a class="btn btn-warning auth-btn" href="{{ url_for('login') }}">Login</a>
+				{% endif %}
 			</div>
 		</nav>
 		<div class="container">

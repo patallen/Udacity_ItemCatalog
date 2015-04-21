@@ -5,3 +5,8 @@
 span.header {
 	font-size: 2em;
 }
+
+.auth-btn {
+	float: right;
+	margin-top: 10px;
+}
