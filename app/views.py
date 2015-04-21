@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for, jsonify, make_response
+from flask import render_template, request, redirect, url_for, jsonify, make_response, abort
 from app.models import Genre, Game, User
 from app.forms import GameForm, DeleteForm
 
@@ -18,6 +18,7 @@ APPLICATION_NAME="Game Catalog"
 def home():
     genres = db.session.query(Genre).all()
     recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(10)
+    # Render public template if not logged in
     if 'credentials' not in login_session:
         return render_template('public_index.html', genres=genres, recent=recentgames)
     return render_template('index.html', genres=genres, recent=recentgames)
@@ -25,8 +26,13 @@ def home():
 
 @app.route('/games/<genre_id>/')
 def genre(genre_id):
-    genre = db.session.query(Genre).filter_by(id=genre_id).one()
+    # Throw 404 if genre_id in URL does not exist in DB
+    try:
+        genre = db.session.query(Genre).filter_by(id=genre_id).one()
+    except:
+        abort(404)
     games = db.session.query(Game).filter_by(genre_id=genre_id).all()
+    # Render public template if not logged in
     if 'credentials' not in login_session:
         return render_template('public_genre.html', genre=genre, games=games)
     return render_template('genre.html', genre=genre, games=games)
@@ -34,7 +40,12 @@ def genre(genre_id):
 
 @app.route('/game/<int:game_id>/')
 def game(game_id):
-    game = db.session.query(Game).filter_by(id=game_id).one()
+    # Throw 404 if game_id in URL does not exist in DB
+    try:
+        game = db.session.query(Game).filter_by(id=game_id).one()
+    except:
+        abort(404)
+    # Render public template if not logged in
     if 'credentials' not in login_session:
         return render_template('public_game.html', game=game)
     return render_template('game.html', game=game)
@@ -43,14 +54,19 @@ def game(game_id):
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
 def addGame(genre_id=None):
+    # Check if logged in
     if 'credentials' not in login_session:
         return "You need to be logged in to add a game."
     form = GameForm()
-    form.genre.choices = [(g.id, g.name)
-                          for g in db.session.query(Genre).all()]
+    form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
     # if genre_id in url set it as genre dropdown's default
     if genre_id is not None:
+        # Throw 404 if genre in URL does not exist
+        try:
+            db.session.query(Genre).filter_by(id=genre_id).one()
+        except:
+            abort(404)
         form.genre.default = genre_id
         form.process()
 
@@ -70,14 +86,18 @@ def addGame(genre_id=None):
 
 @app.route('/game/<int:game_id>/edit/', methods=['POST', 'GET'])
 def editGame(game_id):
-    game = db.session.query(Game).filter_by(id=game_id).one()
-    form = GameForm()
+    # Throw 404 if game_id in URL not in DB
+    try:
+        game = db.session.query(Game).filter_by(id=game_id).one()
+    except:
+        abort(404)
+    # Check if user is owner of the game
     if game.user_id != login_session['user_id']:
         return "You do not have access to edit this game."
 
+    form = GameForm()
     # Fill genre select dropdown with choices from Genre table
-    form.genre.choices = [(g.id, g.name)
-                          for g in db.session.query(Genre).all()]
+    form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
 
     # If form validates and method='POST'
@@ -95,16 +115,21 @@ def editGame(game_id):
     form.description.default = game.description
     form.process()
 
-    print form.errors
     return render_template('editGame.html', game=game, form=form)
 
 
 @app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
 def deleteGame(game_id):
-    game = db.session.query(Game).filter_by(id=game_id).one()
-    form = DeleteForm()
+    # Throw 404 if game_id in URL not in DB
+    try:
+        game = db.session.query(Game).filter_by(id=game_id).one()
+    except:
+        abort(404)
+    # Check if user is owner of the game
     if login_session['user_id'] != game.user_id:
         return "You do not have permission to delete this game."
+
+    form = DeleteForm()
     if form.validate_on_submit():
         db.session.delete(game)
         db.session.commit()
@@ -136,6 +161,7 @@ def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
