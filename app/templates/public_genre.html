@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-12">
+	<span class="header">{{ genre.name }}</span>
+	</div>
+</div>
+<div class="row">
+	{% for game in games %}
+	<div class="col-sm-4">
+	<a href="{{ url_for('game', game_id=game.id) }}">{{ game.title }}</a></br>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-3">
+		<span class="header">Categories</span>
+	</div>
+	<div class="col-sm-6">
+		<span class="header">Most Recent</span>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-3">
+		{% for genre in genres %}
+		<a href="{{ url_for('genre', genre_id=genre.id) }}">{{ genre.name }}</a></br>
+		{% endfor %}
+	</div>
+	<div class="col-sm-9">
+		{% for r in recent %}
+		<a href="{{ url_for('game', game_id=r.id) }}">{{ r.title }}</a> ({{ r.genre_id }})</br>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

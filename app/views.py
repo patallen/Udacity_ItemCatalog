@@ -18,6 +18,8 @@ APPLICATION_NAME="Game Catalog"
 def home():
     genres = db.session.query(Genre).all()
     recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(10)
+    if 'credentials' not in login_session:
+        return render_template('public_index.html', genres=genres, recent=recentgames)
     return render_template('index.html', genres=genres, recent=recentgames)
 
 
@@ -25,18 +27,24 @@ def home():
 def genre(genre_id):
     genre = db.session.query(Genre).filter_by(id=genre_id).one()
     games = db.session.query(Game).filter_by(genre_id=genre_id).all()
+    if 'credentials' not in login_session:
+        return render_template('public_genre.html', genre=genre, games=games)
     return render_template('genre.html', genre=genre, games=games)
 
 
 @app.route('/game/<int:game_id>/')
 def game(game_id):
     game = db.session.query(Game).filter_by(id=game_id).one()
+    if 'credentials' not in login_session:
+        return render_template('public_game.html', game=game)
     return render_template('game.html', game=game)
 
 
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
 def addGame(genre_id=None):
+    if 'credentials' not in login_session:
+        return "You need to be logged in to add a game."
     form = GameForm()
     form.genre.choices = [(g.id, g.name)
                           for g in db.session.query(Genre).all()]
@@ -64,6 +72,8 @@ def addGame(genre_id=None):
 def editGame(game_id):
     game = db.session.query(Game).filter_by(id=game_id).one()
     form = GameForm()
+    if game.user_id != login_session['user_id']:
+        return "You do not have access to edit this game."
 
     # Fill genre select dropdown with choices from Genre table
     form.genre.choices = [(g.id, g.name)
@@ -93,6 +103,8 @@ def editGame(game_id):
 def deleteGame(game_id):
     game = db.session.query(Game).filter_by(id=game_id).one()
     form = DeleteForm()
+    if login_session['user_id'] != game.user_id:
+        return "You do not have permission to delete this game."
     if form.validate_on_submit():
         db.session.delete(game)
         db.session.commit()

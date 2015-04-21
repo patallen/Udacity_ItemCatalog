@@ -4,12 +4,6 @@
 	<div class="col-sm-9">
 		<span class="header">{{ game.title }} (<em>{{ game.genre.name }}</em>)</span>
 	</div>
-	{% if session['user_id'] == game.user_id %}
-	<div class="col-sm-3">
-		<a href="{{ url_for('editGame', game_id=game.id) }}" class="btn btn-default btn-sm">Edit</a>
-		<a href="{{ url_for('deleteGame', game_id=game.id) }}" class="btn btn-default btn-sm">Delete</a>
-	</div>
-	{% endif %}
 </div>
 <div class="row">
 <div class="col-sm-4">
