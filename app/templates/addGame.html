@@ -8,6 +8,12 @@
 <form action="{{ url_for('addGame') }}" method='POST'>
 	{{ form.csrf_token }}
 	<div class="row">
+		<div class="col-sm-12">
+			<div class="form-group">
+				{{ form.title.label }}:
+				{{ form.title(class="form-control") }}
+			</div>
+		</div>
 		<div class="col-sm-4">
 			<div class="form-group">
 				{{ form.genre.label }}:
@@ -16,16 +22,17 @@
 		</div>
 		<div class="col-sm-8">
 			<div class="form-group">
-				{{ form.title.label }}:
-				{{ form.title(class="form-control") }}
+				{{ form.image.label }}:
+				{{ form.image(class="form-control") }}
 			</div>
 		</div>
-		<div class="col-sm-12">
+		<div class="game_desc col-sm-12">
 			<div class="form-group">
 				{{ form.description.label }}:
 				{{ form.description(class="form-control") }}
 			</div>
 		</div>
+		
 		<div class="col-sm-12">
 			<div class="form-group">
 				<input type="submit" class="btn btn-success"value="Add Game">
