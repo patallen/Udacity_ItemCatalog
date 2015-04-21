@@ -10,3 +10,8 @@ span.header {
 	float: right;
 	margin-top: 10px;
 }
+.game_desc textarea{
+	min-height: 140px;
+	resize: vertical;
+}
+
