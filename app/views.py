@@ -3,6 +3,8 @@ from flask import render_template, request, redirect, url_for, jsonify, make_res
 from werkzeug import secure_filename
 from app.models import Genre, Game, User
 from app.forms import GameForm, DeleteForm
+from helpers import *
+
 import os
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
@@ -51,20 +53,6 @@ def game(game_id):
     if 'credentials' not in login_session:
         return render_template('public_game.html', game=game)
     return render_template('game.html', game=game)
-
-
-def validateFile(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
-
-def uploadImage(file, game):
-    if validateFile(file.filename):
-        ext = '.' + file.filename.rsplit(".", 1)[1]
-        name = 'game%simg' % str(game.id)
-        filename = name + ext
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        game.picture = filename
-        db.session.add(game)
-        db.session.commit()
 
 
 @app.route('/game/new/', methods=['POST', 'GET'])
@@ -277,26 +265,3 @@ def gdisconnect():
         response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         return response
-
-
-#################################################
-#             Helper Functions                  #
-#################################################
-def getUserInfo(user_id):
-    user = db.session.query(User).filter_by(id=user_id).one()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = db.session.query(User).filter_by(email=email).one()
-        return user.id 
-    except:
-        return None
-
-
-def createUser(login_session):
-    newUser = User(login_session['username'], login_session['email'], login_session['picture'])
-    db.session.add(newUser)
-    db.session.commit()
-    return newUser.id
