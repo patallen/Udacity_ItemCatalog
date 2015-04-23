@@ -84,7 +84,7 @@ def addGame(genre_id=None):
             user_id=user, title=title, genre_id=genre, description=description)
         db.session.add(newGame)
         db.session.commit()
-        uploadImage(file, newGame)
+        uploadGameImage(file, newGame)
             
         return redirect(url_for('game', game_id=newGame.id))
 
@@ -112,8 +112,11 @@ def editGame(game_id):
         game.title = form.title.data
         game.genre_id = form.genre.data
         game.description = form.description.data
+        file = request.files['image']
         db.session.add(game)
         db.session.commit()
+        if file:
+            uploadGameImage(file, game)
         return redirect(url_for('game', game_id=game.id))
 
     # Set defaults in form as current values
