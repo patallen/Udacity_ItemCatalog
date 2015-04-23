@@ -5,7 +5,7 @@
 	<span class="header">Add a game</span>
 	</div>
 </div>
-<form action="{{ url_for('addGame') }}" method='POST'>
+<form action="{{ url_for('addGame') }}" enctype='multipart/form-data' method='POST'>
 	{{ form.csrf_token }}
 	<div class="row">
 		<div class="col-sm-12">

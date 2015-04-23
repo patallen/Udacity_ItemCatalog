@@ -41,7 +41,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
-    picture = db.Column(db.String(250))
+    picture = db.Column(db.String(250), default='default.jpg')
 
     genre_id = db.Column(db.String(64), db.ForeignKey('genre.id'))
     genre = db.relationship(Genre)
@@ -55,6 +55,7 @@ class Game(db.Model):
             'id' : self.id,
             'title' : self.title,
             'description' : self.description,
+            'picture' : self.picture,
             'genre_id' : self.genre_id,
             'user_id' : self.user_id
         }
