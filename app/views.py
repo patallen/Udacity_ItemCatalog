@@ -1,7 +1,9 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for, jsonify, make_response, abort
+from flask import render_template, request, redirect, url_for, jsonify, make_response, abort 
+from werkzeug import secure_filename
 from app.models import Genre, Game, User
 from app.forms import GameForm, DeleteForm
+import os
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import httplib2, json, random, string, requests
@@ -51,6 +53,20 @@ def game(game_id):
     return render_template('game.html', game=game)
 
 
+def validateFile(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
+def uploadImage(file, game):
+    if validateFile(file.filename):
+        ext = '.' + file.filename.rsplit(".", 1)[1]
+        name = 'game%simg' % str(game.id)
+        filename = name + ext
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        game.picture = filename
+        db.session.add(game)
+        db.session.commit()
+
+
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
 def addGame(genre_id=None):
@@ -75,10 +91,13 @@ def addGame(genre_id=None):
         title = form.title.data
         genre = form.genre.data
         description = form.description.data
+        file = request.files['image']
         newGame = Game(
             user_id=user, title=title, genre_id=genre, description=description)
         db.session.add(newGame)
         db.session.commit()
+        uploadImage(file, newGame)
+            
         return redirect(url_for('game', game_id=newGame.id))
 
     return render_template('addGame.html', genre_id=genre_id, form=form)
