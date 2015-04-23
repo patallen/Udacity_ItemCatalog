@@ -66,7 +66,10 @@ def uploadImage(file, game):
         db.session.add(game)
         db.session.commit()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1516bedffc814b3ce2778eb993007fbec8f3b874
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
 def addGame(genre_id=None):
