@@ -108,7 +108,6 @@ def editGame(game_id):
     form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
 
-    # If form validates and method='POST'
     if form.validate_on_submit():
         game.title = form.title.data
         game.genre_id = form.genre.data
@@ -132,6 +131,8 @@ def editGame(game_id):
 
 @app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
 def deleteGame(game_id):
+    if 'credentials' not in login_session:
+        return "Must be logged in to delete a game."
     # Throw 404 if game_id in URL not in DB
     try:
         game = db.session.query(Game).filter_by(id=game_id).one()
@@ -177,7 +178,7 @@ def login():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-    # if state is not correct, return 'invalid state' response
+    # If state is not correct, return 'invalid state' response
     if login_session['state'] != request.args.get('state'):
         response = make_response(json.dumps('Invalid state parameter'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -201,6 +202,7 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
 
+    # Check that user_id from request matches gplus_id from credentials
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(json.dumps("Token's user ID doesn't match given user ID"), 401)
@@ -231,17 +233,18 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
 
+    # Set login_session variables
     login_session['username'] = data["name"]
     login_session['picture'] = data["picture"]
     login_session['email'] = data["email"]
     
-    print login_session['email']
+    # Create user if email doesn't exist in DB
     user_id = getUserID(login_session['email'])
     if user_id is None:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-    return "Welcome %s, redirecting..." % login_session['username']
+    return "Welcome %s" % login_session['username']
 
 
 @app.route('/gdisconnect/')
@@ -261,6 +264,7 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
 
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
