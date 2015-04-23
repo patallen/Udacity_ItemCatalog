@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
+	{% with messages = get_flashed_messages() %}
+		{% for message in messages %}
+		<div class="alert alert-success">
+			{{ message }}
+		</div>
+		{% endfor %}
+	{% endwith %}
 	<div class="col-sm-9">
 		<span class="header">{{ game.title }} (<em>{{ game.genre.name }}</em>)</span>
 	</div>

@@ -1,11 +1,12 @@
+import os
+
 from app import app, db
-from flask import render_template, request, redirect, url_for, jsonify, make_response, abort 
-from werkzeug import secure_filename
+
+from flask import render_template, request, redirect, url_for
+from flask import jsonify, make_response, abort, flash
 from app.models import Genre, Game, User
 from app.forms import GameForm, DeleteForm
 from helpers import *
-
-import os
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import httplib2, json, random, string, requests
@@ -85,7 +86,7 @@ def addGame(genre_id=None):
         db.session.add(newGame)
         db.session.commit()
         uploadGameImage(file, newGame)
-            
+        flash('Game %s added successfully!' % newGame.title)
         return redirect(url_for('game', game_id=newGame.id))
 
     return render_template('addGame.html', genre_id=genre_id, form=form)
@@ -117,6 +118,7 @@ def editGame(game_id):
         db.session.commit()
         if file:
             uploadGameImage(file, game)
+        flash('Game edited successfully!')
         return redirect(url_for('game', game_id=game.id))
 
     # Set defaults in form as current values
