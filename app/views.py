@@ -224,11 +224,11 @@ def gconnect():
         response.headers['Content-Type'] = 'application.json'
 
     # Store the access token in the session for later use
-    login_session['credentials'] = credentials
+    login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-    params = {'access_token': credentials.access_token, 'alt':'json'}
+    params = {'access_token': login_session['credentials'], 'alt':'json'}
 
     answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
@@ -254,7 +254,7 @@ def gdisconnect():
         response = make_response('Current user not connected.', 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    access_token = credentials.access_token
+    access_token = credentials
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
