@@ -21,7 +21,7 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_i
 @app.route('/')
 def home():
     ''' Retrieves list of genres and 10 most recent games
-        and returns them with index.html template'''
+    and returns them with index.html template'''
     genres = db.session.query(Genre).all()
     recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(10)
     # Render public template if not logged in
@@ -68,14 +68,12 @@ def game(game_id):
 
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
+@login_required
 def addGame(genre_id=None):
     ''' Route function to add a game. If genre_id is supplied,
         the genre dropdown on the returned page is automatically
         populated with the genre. '''
 
-    # Check if logged in
-    if 'credentials' not in login_session:
-        return "You need to be logged in to add a game."
     form = GameForm()
     form.genre.choices = [(g.id, g.name) for g in db.session.query(Genre).all()]
     form.genre.choices.insert(0, ('', 'Select...'))
@@ -107,6 +105,7 @@ def addGame(genre_id=None):
 
 
 @app.route('/game/<int:game_id>/edit/', methods=['POST', 'GET'])
+@login_required
 def editGame(game_id):
     ''' Takes a game_id. Form lets the owner of a game edit any of
         it's properties'''
@@ -147,6 +146,7 @@ def editGame(game_id):
 
 
 @app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
+@login_required
 def deleteGame(game_id):
     ''' This route function lets the owner of a game post delete the game'''
 
