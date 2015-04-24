@@ -13,7 +13,6 @@ import httplib2, json, random, string, requests
 from flask import session as login_session
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
-APPLICATION_NAME="Game Catalog"
 
 
 #################################################
@@ -21,6 +20,8 @@ APPLICATION_NAME="Game Catalog"
 #################################################
 @app.route('/')
 def home():
+    ''' Retrieves list of genres and 10 most recent games
+        and returns them with index.html template'''
     genres = db.session.query(Genre).all()
     recentgames = db.session.query(Game).order_by(Game.id.desc()).limit(10)
     # Render public template if not logged in
@@ -31,12 +32,17 @@ def home():
 
 @app.route('/games/<genre_id>/')
 def genre(genre_id):
+    ''' Takes a genre_id, checks to make sure it matches
+        one in the database, then returns games within the
+        given genre with genre.html '''
+
     # Throw 404 if genre_id in URL does not exist in DB
     try:
         genre = db.session.query(Genre).filter_by(id=genre_id).one()
     except:
         abort(404)
     games = db.session.query(Game).filter_by(genre_id=genre_id).all()
+
     # Render public template if not logged in
     if 'credentials' not in login_session:
         return render_template('public_genre.html', genre=genre, games=games)
@@ -45,6 +51,10 @@ def genre(genre_id):
 
 @app.route('/game/<int:game_id>/')
 def game(game_id):
+    ''' Takes a game_id, checks to make sure it matches one
+        in the database, then returns the game with the
+        game.html template'''
+
     # Throw 404 if game_id in URL does not exist in DB
     try:
         game = db.session.query(Game).filter_by(id=game_id).one()
@@ -59,6 +69,10 @@ def game(game_id):
 @app.route('/game/new/', methods=['POST', 'GET'])
 @app.route('/games/<genre_id>/new/')
 def addGame(genre_id=None):
+    ''' Route function to add a game. If genre_id is supplied,
+        the genre dropdown on the returned page is automatically
+        populated with the genre. '''
+
     # Check if logged in
     if 'credentials' not in login_session:
         return "You need to be logged in to add a game."
@@ -94,6 +108,9 @@ def addGame(genre_id=None):
 
 @app.route('/game/<int:game_id>/edit/', methods=['POST', 'GET'])
 def editGame(game_id):
+    ''' Takes a game_id. Form lets the owner of a game edit any of
+        it's properties'''
+
     # Throw 404 if game_id in URL not in DB
     try:
         game = db.session.query(Game).filter_by(id=game_id).one()
@@ -131,6 +148,8 @@ def editGame(game_id):
 
 @app.route('/game/<int:game_id>/delete/', methods=['POST', 'GET'])
 def deleteGame(game_id):
+    ''' This route function lets the owner of a game post delete the game'''
+
     if 'credentials' not in login_session:
         return "Must be logged in to delete a game."
     # Throw 404 if game_id in URL not in DB
@@ -171,6 +190,10 @@ def gameJSON(game_id):
 #################################################
 @app.route('/login/')
 def login():
+    ''' Returns a simple page with google OAuth login button
+        This function also contains the code for generation the STATE,
+        which is used by google OAuth to authenticate users'''
+
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state)
@@ -178,6 +201,8 @@ def login():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    ''' Signs a user into the application using google OAuth'''
+
     # If state is not correct, return 'invalid state' response
     if login_session['state'] != request.args.get('state'):
         response = make_response(json.dumps('Invalid state parameter'), 401)
@@ -249,6 +274,8 @@ def gconnect():
 
 @app.route('/gdisconnect/')
 def gdisconnect():
+    ''' Disconnect a user from google OAuth. Signs them out of the application'''
+
     credentials = login_session.get('credentials')
     if credentials is None:
         response = make_response('Current user not connected.', 401)
