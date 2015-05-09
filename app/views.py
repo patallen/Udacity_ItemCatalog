@@ -1,4 +1,4 @@
-import os
+import os.path
 
 from app import app, db
 
@@ -12,7 +12,10 @@ from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import httplib2, json, random, string, requests
 from flask import session as login_session
 
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+#cwd = os.curdir 
+pwd = os.path.dirname(os.path.realpath(__file__))
+cspath = os.path.join(pwd, '../client_secrets.json')
+CLIENT_ID = json.loads(open(cspath, 'r').read())['web']['client_id']
 
 
 #################################################
